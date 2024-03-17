@@ -1,0 +1,6 @@
+{
+    "北宋":{
+        "events_path": "beisong/events.json",
+        "figures_path":"figures.json"
+    }
+}
