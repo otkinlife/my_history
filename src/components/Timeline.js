@@ -3,7 +3,7 @@ import { Chrono } from 'react-chrono';
 import { Form } from 'react-bootstrap';
 import Markdown from 'react-markdown';
 import Event from './Event';
-import epochsData from './epoch.json'; // 直接从 JSON 文件中导入数据
+import epochsData from '../../public/data/epoch.json'; // 直接从 JSON 文件中导入数据
 
 function Timeline() {
   const [epoch, setEpoch] = useState(null);
