@@ -8,8 +8,10 @@ WORKDIR /usr/src/app
 COPY . .
 
 # 安装项目依赖
-RUN npm config set registry https://registry.npm.taobao.org
-RUN npm install
+RUN npm config set registry http://mirrors.cloud.tencent.com/npm/
+RUN npm install -g cnpm
+
+RUN cnpm install
 
 # 暴露端口（如果需要的话）
 EXPOSE 3000
