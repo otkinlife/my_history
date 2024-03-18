@@ -8,6 +8,7 @@ WORKDIR /usr/src/app
 COPY . .
 
 # 安装项目依赖
+RUN npm config set registry https://registry.npm.taobao.org
 RUN npm install
 
 # 暴露端口（如果需要的话）
