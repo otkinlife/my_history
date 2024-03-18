@@ -3,7 +3,6 @@ import { Chrono } from 'react-chrono';
 import { Form } from 'react-bootstrap';
 import Markdown from 'react-markdown';
 import Event from './Event';
-import epochsData from '../../public/data/epoch.json'; // 直接从 JSON 文件中导入数据
 
 function Timeline() {
   const [epoch, setEpoch] = useState(null);
@@ -14,8 +13,12 @@ function Timeline() {
 
   // 设置 epochs 并选择第一个时期
   useEffect(() => {
-    setEpochs(epochsData);
-    setEpoch(Object.keys(epochsData)[0]);
+    fetch(process.env.PUBLIC_URL + "/data/epoch.json")
+      .then(response => response.json())
+      .then(data => {
+        setEpochs(data);
+        setEpoch(Object.keys(data)[0]);
+      });
   }, []);
 
   // 当 epoch 改变时，重新加载事件和人物
