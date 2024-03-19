@@ -52,12 +52,12 @@ function Timeline() {
       </div>
     ),
     url: event.url,
-    media: {
-      type: "IMAGE",
-      source: {
-        url: event.img ? `${process.env.PUBLIC_URL}/static/${event.img}` : `${process.env.PUBLIC_URL}/static/default.png`
-      }
-    },
+    // media: {
+    //   type: "IMAGE",
+    //   source: {
+    //     url: event.img ? `${process.env.PUBLIC_URL}/static/${event.img}` : `${process.env.PUBLIC_URL}/static/default.png`
+    //   }
+    // },
     cardDetailedText: (
       <Markdown>
         {`**描述：**\n- ${event.desc.join('\n- ')}\n`}
