@@ -9,9 +9,9 @@ function Timeline() {
   const [epochs, setEpochs] = useState({});
   const [events, setEvents] = useState([]);
   const [figures, setFigures] = useState({});
-  const [loading, setLoading] = useState(true); // 添加一个新的状态变量
+  const [loading, setLoading] = useState(true);
+  const [showMedia, setShowMedia] = useState(false);
 
-  // 设置 epochs 并选择第一个时期
   useEffect(() => {
     fetch(process.env.PUBLIC_URL + "/data/epoch.json")
       .then(response => response.json())
@@ -21,10 +21,9 @@ function Timeline() {
       });
   }, []);
 
-  // 当 epoch 改变时，重新加载事件和人物
   useEffect(() => {
     if (epoch) {
-      setLoading(true); // 开始加载数据
+      setLoading(true);
       Promise.all([
         fetch(process.env.PUBLIC_URL + "/data/" + epochs[epoch].events_path)
           .then(response => response.json())
@@ -32,9 +31,9 @@ function Timeline() {
         fetch(process.env.PUBLIC_URL + "/data/" + epochs[epoch].figures_path)
           .then(response => response.json())
           .then(data => setFigures(data))
-      ]).then(() => setLoading(false)); // 数据加载完毕
+      ]).then(() => setLoading(false));
     }
-  }, [epoch, epochs]);
+  }, [epoch, epochs, showMedia]); // 添加showMedia到依赖数组
 
   const items = events.sort((a, b) => a.year - b.year).map(event => ({
     title: event.year.toString(),
@@ -52,12 +51,12 @@ function Timeline() {
       </div>
     ),
     url: event.url,
-    // media: {
-    //   type: "IMAGE",
-    //   source: {
-    //     url: event.img ? `${process.env.PUBLIC_URL}/static/${event.img}` : `${process.env.PUBLIC_URL}/static/default.png`
-    //   }
-    // },
+    media: showMedia ? {
+      type: "IMAGE",
+      source: {
+        url: event.img ? `${process.env.PUBLIC_URL}/static/${event.img}` : `${process.env.PUBLIC_URL}/static/default.png`
+      }
+    } : undefined,
     cardDetailedText: (
       <Markdown>
         {`**描述：**\n- ${event.desc.join('\n- ')}\n`}
@@ -67,11 +66,21 @@ function Timeline() {
 
   return (
     <div>
-      <Form.Control as="select" custom value={epoch} onChange={e => setEpoch(e.target.value)}>
-        <option value="">选择一个时期</option>
-        {Object.keys(epochs).map(epoch => <option key={epoch}>{epoch}</option>)}
-      </Form.Control>
-      {!loading && epoch && <Chrono items={items} mode="VERTICAL_ALTERNATING" cardHeight={400} slideShow />}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Form.Control as="select" custom value={epoch} onChange={e => setEpoch(e.target.value)}>
+          <option value="">选择一个时期</option>
+          {Object.keys(epochs).map(epoch => <option key={epoch}>{epoch}</option>)}
+        </Form.Control>
+        <Form.Check
+          style={{ minWidth: '8rem',marginLeft: '1rem'}}
+          type="switch"
+          id="custom-switch"
+          label="显示封面"
+          checked={showMedia}
+          onChange={() => setShowMedia(!showMedia)}
+        />
+      </div>
+      {!loading && epoch && <Chrono items={items} mode="VERTICAL_ALTERNATING" cardHeight={showMedia ? 400 : 300} slideShow />}
     </div>
   );
 }
