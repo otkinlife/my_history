@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Chrono } from 'react-chrono';
 import { Form } from 'react-bootstrap';
 import Markdown from 'react-markdown';
@@ -11,6 +11,7 @@ function Timeline() {
   const [figures, setFigures] = useState({});
   const [loading, setLoading] = useState(true);
   const [showMedia, setShowMedia] = useState(false);
+  const chronoRef = useRef(null); // 使用 useRef 获取 Chrono 组件的引用
 
   useEffect(() => {
     fetch(process.env.PUBLIC_URL + "/data/epoch.json")
@@ -33,7 +34,13 @@ function Timeline() {
           .then(data => setFigures(data))
       ]).then(() => setLoading(false));
     }
-  }, [epoch, epochs, showMedia]); // 添加showMedia到依赖数组
+  }, [epoch, epochs, showMedia]);
+
+  useEffect(() => {
+    if (!loading && chronoRef.current) {
+      chronoRef.current.jumpTo(0); // 数据加载完成后跳转到第一个时间点
+    }
+  }, [loading]);
 
   const items = events.sort((a, b) => a.year - b.year).map(event => ({
     title: event.year.toString(),
@@ -72,7 +79,7 @@ function Timeline() {
           {Object.keys(epochs).map(epoch => <option key={epoch}>{epoch}</option>)}
         </Form.Control>
         <Form.Check
-          style={{ minWidth: '8rem',marginLeft: '1rem'}}
+          style={{ minWidth: '8rem', marginLeft: '1rem' }}
           type="switch"
           id="custom-switch"
           label="显示封面"
@@ -80,7 +87,9 @@ function Timeline() {
           onChange={() => setShowMedia(!showMedia)}
         />
       </div>
-      {!loading && epoch && <Chrono items={items} mode="VERTICAL_ALTERNATING" cardHeight={showMedia ? 400 : 300} slideShow />}
+      {!loading && epoch && (
+        <Chrono ref={chronoRef} items={items} mode="VERTICAL_ALTERNATING" cardHeight={showMedia ? 400 : 300} slideShow />
+      )}
     </div>
   );
 }

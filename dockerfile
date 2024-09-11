@@ -14,7 +14,7 @@ RUN npm install -g cnpm
 RUN cnpm install
 
 # 暴露端口（如果需要的话）
-EXPOSE 3000
+EXPOSE 9003
 
 # 运行 npm start
 CMD [ "npm", "start" ]
