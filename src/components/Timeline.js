@@ -67,7 +67,7 @@ function Timeline() {
     <div>
       {!loading && epoch && (
         <div className="App">
-          <div style={{ width: "90%", height: "90vh" }}>
+          <div style={{ width: "100%", height: "90vh" }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Form.Control as="select" custom value={epoch || ""} onChange={e => setEpoch(e.target.value)}>
                 <option value="">选择一个时期</option>
