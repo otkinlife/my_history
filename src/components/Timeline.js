@@ -1,24 +1,23 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Chrono } from 'react-chrono';
 import { Form } from 'react-bootstrap';
 import Markdown from 'react-markdown';
 import Event from './Event';
 
 function Timeline() {
-  const [epoch, setEpoch] = useState(null);
+  const [epoch, setEpoch] = useState("");
   const [epochs, setEpochs] = useState({});
   const [events, setEvents] = useState([]);
   const [figures, setFigures] = useState({});
   const [loading, setLoading] = useState(true);
   const [showMedia, setShowMedia] = useState(false);
-  const chronoRef = useRef(null); // 使用 useRef 获取 Chrono 组件的引用
 
   useEffect(() => {
     fetch(process.env.PUBLIC_URL + "/data/epoch.json")
       .then(response => response.json())
       .then(data => {
         setEpochs(data);
-        setEpoch(Object.keys(data)[0]);
+        setEpoch(Object.keys(data)[0] || "");
       });
   }, []);
 
@@ -35,12 +34,6 @@ function Timeline() {
       ]).then(() => setLoading(false));
     }
   }, [epoch, epochs, showMedia]);
-
-  useEffect(() => {
-    if (!loading && chronoRef.current) {
-      chronoRef.current.jumpTo(0); // 数据加载完成后跳转到第一个时间点
-    }
-  }, [loading]);
 
   const items = events.sort((a, b) => a.year - b.year).map(event => ({
     title: event.year.toString(),
@@ -74,9 +67,9 @@ function Timeline() {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Form.Control as="select" custom value={epoch} onChange={e => setEpoch(e.target.value)}>
+        <Form.Control as="select" custom value={epoch || ""} onChange={e => setEpoch(e.target.value)}>
           <option value="">选择一个时期</option>
-          {Object.keys(epochs).map(epoch => <option key={epoch}>{epoch}</option>)}
+          {Object.keys(epochs).map(epoch => <option key={epoch} value={epoch}>{epoch}</option>)}
         </Form.Control>
         <Form.Check
           style={{ minWidth: '8rem', marginLeft: '1rem' }}
@@ -88,7 +81,26 @@ function Timeline() {
         />
       </div>
       {!loading && epoch && (
-        <Chrono ref={chronoRef} items={items} mode="VERTICAL_ALTERNATING" cardHeight={showMedia ? 400 : 300} slideShow />
+        <div className="App">
+          <div style={{ width: "90%", height: "90vh" }}>
+            <Chrono
+              items={items}
+              mode="VERTICAL"
+              slideShow
+              slideItemDuration={3000}
+              cardHeight={250}
+              cardWidth={600}
+              fontSizes={{
+                title: "1.1rem"
+              }}
+              contentDetailsHeight={150}
+              onItemSelected={(item) => {
+                // 可以在这里处理选中事件
+                console.log('Selected item:', item);
+              }}
+            />
+          </div>
+        </div>
       )}
     </div>
   );
