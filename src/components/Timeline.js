@@ -11,7 +11,6 @@ function Timeline() {
   const [figures, setFigures] = useState({});
   const [loading, setLoading] = useState(true);
   const [showMedia, setShowMedia] = useState(false);
-
   useEffect(() => {
     fetch(process.env.PUBLIC_URL + "/data/epoch.json")
       .then(response => response.json())
@@ -66,27 +65,34 @@ function Timeline() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Form.Control as="select" custom value={epoch || ""} onChange={e => setEpoch(e.target.value)}>
-          <option value="">选择一个时期</option>
-          {Object.keys(epochs).map(epoch => <option key={epoch} value={epoch}>{epoch}</option>)}
-        </Form.Control>
-        <Form.Check
-          style={{ minWidth: '8rem', marginLeft: '1rem' }}
-          type="switch"
-          id="custom-switch"
-          label="显示封面"
-          checked={showMedia}
-          onChange={() => setShowMedia(!showMedia)}
-        />
-      </div>
       {!loading && epoch && (
         <div className="App">
           <div style={{ width: "90%", height: "90vh" }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Form.Control as="select" custom value={epoch || ""} onChange={e => setEpoch(e.target.value)}>
+                <option value="">选择一个时期</option>
+                {Object.keys(epochs).map(epoch => <option key={epoch} value={epoch}>{epoch}</option>)}
+              </Form.Control>
+              <Form.Check
+                style={{ minWidth: '8rem', marginLeft: '1rem' }}
+                type="switch"
+                id="custom-switch"
+                label="显示封面"
+                checked={showMedia}
+                onChange={() => setShowMedia(!showMedia)}
+              />
+            </div>
             <Chrono
               items={items}
               mode="VERTICAL"
               slideShow
+              buttonTexts={{
+                first: '第一个节点',
+                last: '最后一个节点',
+                next: '下一个节点',
+                previous: '上一个节点',
+                play: '播放',
+              }}
               slideItemDuration={3000}
               cardHeight={250}
               cardWidth={600}
@@ -98,7 +104,8 @@ function Timeline() {
                 // 可以在这里处理选中事件
                 console.log('Selected item:', item);
               }}
-            />
+            >
+           </Chrono>
           </div>
         </div>
       )}
